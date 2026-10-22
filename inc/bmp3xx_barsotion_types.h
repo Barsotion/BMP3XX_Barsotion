@@ -49,6 +49,8 @@ typedef struct bmp3xx_cfg
 		enum BMP3XX_I2C_WDT timeout;
 	} i2c_wdt;
 	enum BMP3XX_SPI_MODE spi_mode;
+	int (*read_register) (uint8_t, uint8_t*, unsigned);
+	int (*write_register) (uint8_t, const uint8_t*, unsigned);
 } _bmp3xx_barsotion_cfg_t;
 
 typedef struct bmp3xx_desc
@@ -58,6 +60,8 @@ typedef struct bmp3xx_desc
 		float t1, t2, t3;
         float p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11;
 	} _par;
+	int (*read_register) (uint8_t, uint8_t*, unsigned);
+	int (*write_register) (uint8_t, const uint8_t*, unsigned);
 	uint8_t address;
 	uint32_t uncomp_press;
 	uint32_t uncomp_temp;

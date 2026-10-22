@@ -9,10 +9,13 @@
 	}\
 } while(0);
 
+#define readRegister		desc->read_register
+#define writeRegister		desc->write_register
+
 static int _read_calibration_data(struct bmp3xx_desc *desc)
 {
 	uint8_t data[21];
-	_ROE(bmp3xx_read_register(BMP3XX_T1_L, data, 21));
+	_ROE(readRegister(BMP3XX_T1_L, data, 21));
 	desc->_par.t1 = (float)(((uint16_t)data[1] << 8) | ((uint16_t)data[0]));
 	desc->_par.t2 = (float)(((uint16_t)data[3] << 8) | ((uint16_t)data[2]));
 	desc->_par.t3 = (float)((int8_t)data[4]);
@@ -87,7 +90,7 @@ int bmp3xx_get_chip_id(struct bmp3xx_desc *desc, uint8_t *id)
 {
 	if (desc == NULL) return 1;
 	uint8_t chip_id = 0;
-	_ROE(bmp3xx_read_register(BMP3XX_CHIP_ID, &chip_id, 1));
+	_ROE(readRegister(BMP3XX_CHIP_ID, &chip_id, 1));
 	*id = chip_id;
 	return 0;
 }
@@ -96,7 +99,7 @@ int bmp3xx_get_fatal_err_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_err_reg_t err_reg;
-	_ROE(bmp3xx_read_register(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
+	_ROE(readRegister(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
 	*status = (bool)err_reg.fatal_err;
 	return 0;
 }
@@ -105,7 +108,7 @@ int bmp3xx_get_cmd_err_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_err_reg_t err_reg;
-	_ROE(bmp3xx_read_register(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
+	_ROE(readRegister(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
 	*status = (bool)err_reg.cmd_err;
 	return 0;
 }
@@ -114,7 +117,7 @@ int bmp3xx_get_conf_err_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_err_reg_t err_reg;
-	_ROE(bmp3xx_read_register(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
+	_ROE(readRegister(BMP3XX_ERR_REG, (uint8_t*)&err_reg, 1));
 	*status = (bool)err_reg.conf_err;
 	return 0;
 }
@@ -123,7 +126,7 @@ int bmp3xx_get_cmd_rdy_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_status_t st;
-	_ROE(bmp3xx_read_register(BMP3XX_STATUS, (uint8_t*)&st, 1));
+	_ROE(readRegister(BMP3XX_STATUS, (uint8_t*)&st, 1));
 	*status = (bool)st.cmd_rdy;
 	return 0;
 }
@@ -132,7 +135,7 @@ int bmp3xx_get_drdy_press_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_status_t st;
-	_ROE(bmp3xx_read_register(BMP3XX_STATUS, (uint8_t*)&st, 1));
+	_ROE(readRegister(BMP3XX_STATUS, (uint8_t*)&st, 1));
 	*status = (bool)st.drdy_press;
 	return 0;
 }
@@ -141,7 +144,7 @@ int bmp3xx_get_drdy_temp_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_status_t st;
-	_ROE(bmp3xx_read_register(BMP3XX_STATUS, (uint8_t*)&st, 1));
+	_ROE(readRegister(BMP3XX_STATUS, (uint8_t*)&st, 1));
 	*status = (bool)st.drdy_temp;
 	return 0;
 }
@@ -150,7 +153,7 @@ int bmp3xx_get_por_detected_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_event_t event;
-	_ROE(bmp3xx_read_register(BMP3XX_EVENT, (uint8_t*)&event, 1));
+	_ROE(readRegister(BMP3XX_EVENT, (uint8_t*)&event, 1));
 	*status = (bool)event.por_detected;
 	return 0;
 }
@@ -159,7 +162,7 @@ int bmp3xx_get_fifo_wm_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_status_t int_status;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
+	_ROE(readRegister(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
 	*status = (bool)int_status.fwm_int;
 	return 0;
 }
@@ -168,7 +171,7 @@ int bmp3xx_get_fifo_full_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_status_t int_status;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
+	_ROE(readRegister(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
 	*status = (bool)int_status.ffull_int;
 	return 0;
 }
@@ -177,7 +180,7 @@ int bmp3xx_get_drdy_status(struct bmp3xx_desc *desc, bool *status)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_status_t int_status;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
+	_ROE(readRegister(BMP3XX_INT_STATUS, (uint8_t*)&int_status, 1));
 	*status = (bool)int_status.drdy;
 	return 0;
 }
@@ -186,12 +189,12 @@ int bmp3xx_set_fifo_config(struct bmp3xx_desc *desc, const struct bmp3xx_fifo_cf
 {
 	if (desc == NULL || cfg == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_1_t fifo_config_1;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
 	fifo_config_1.fifo_stop_on_full = cfg->stop_on_full_en & 1;
 	fifo_config_1.fifo_time_en = cfg->time_en & 1;
 	fifo_config_1.fifo_press_en = cfg->press_en & 1;
 	fifo_config_1.fifo_temp_en = cfg->temp_en & 1;
-	_ROE(bmp3xx_write_register(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
+	_ROE(writeRegister(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
 	return 0;
 }
 
@@ -199,7 +202,7 @@ int bmp3xx_get_fifo_config(struct bmp3xx_desc *desc, struct bmp3xx_fifo_cfg *cfg
 {
 	if (desc == NULL || cfg == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_1_t fifo_config_1;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_1, (uint8_t*)&fifo_config_1, 1));
 	cfg->stop_on_full_en = fifo_config_1.fifo_stop_on_full;
 	cfg->time_en = fifo_config_1.fifo_time_en;
 	cfg->press_en = fifo_config_1.fifo_press_en;
@@ -211,9 +214,9 @@ int bmp3xx_set_fifo_subsampling(struct bmp3xx_desc *desc, uint8_t subsampling)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_2_t fifo_config_2;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	fifo_config_2.fifo_subsampling = subsampling & 0x7;
-	_ROE(bmp3xx_write_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(writeRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	return 0;
 }
 
@@ -221,7 +224,7 @@ int bmp3xx_get_fifo_subsampling(struct bmp3xx_desc *desc, uint8_t *subsampling)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_2_t fifo_config_2;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	*subsampling = fifo_config_2.fifo_subsampling;
 	return 0;
 }
@@ -230,9 +233,9 @@ int bmp3xx_set_data_select(struct bmp3xx_desc *desc, enum BMP3XX_DATA data_sel)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_2_t fifo_config_2;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	fifo_config_2.data_select = data_sel;
-	_ROE(bmp3xx_write_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(writeRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	return 0;
 }
 
@@ -240,7 +243,7 @@ int bmp3xx_get_data_select(struct bmp3xx_desc *desc, enum BMP3XX_DATA *data_sel)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_fifo_config_2_t fifo_config_2;
-	_ROE(bmp3xx_read_register(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
+	_ROE(readRegister(BMP3XX_FIFO_CONFIG_2, (uint8_t*)&fifo_config_2, 1));
 	*data_sel = fifo_config_2.data_select;
 	return 0;
 }
@@ -249,9 +252,9 @@ int bmp3xx_set_int_output_drive(struct bmp3xx_desc *desc, enum BMP3XX_INT_O od)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.int_od = od;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -259,7 +262,7 @@ int bmp3xx_get_int_output_drive(struct bmp3xx_desc *desc, enum BMP3XX_INT_O *od)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*od = int_ctrl.int_od;
 	return 0;
 }
@@ -268,9 +271,9 @@ int bmp3xx_set_int_level(struct bmp3xx_desc *desc, enum BMP3XX_INT_LVL lvl)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.int_level = lvl;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -278,7 +281,7 @@ int bmp3xx_get_int_level(struct bmp3xx_desc *desc, enum BMP3XX_INT_LVL *lvl)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*lvl = int_ctrl.int_level;
 	return 0;
 }
@@ -287,9 +290,9 @@ int bmp3xx_set_int_latch_en(struct bmp3xx_desc *desc, bool latch_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.int_latch_en = latch_en & 1;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -297,7 +300,7 @@ int bmp3xx_get_int_latch_en(struct bmp3xx_desc *desc, bool *latch_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*latch_en = int_ctrl.int_latch_en;
 	return 0;
 }
@@ -306,9 +309,9 @@ int bmp3xx_set_int_fwtm_en(struct bmp3xx_desc *desc, bool fwtm_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.fwtm_en = fwtm_en & 1;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -316,7 +319,7 @@ int bmp3xx_get_int_fwtm_en(struct bmp3xx_desc *desc, bool *fwtm_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*fwtm_en = int_ctrl.fwtm_en;
 	return 0;
 }
@@ -325,9 +328,9 @@ int bmp3xx_set_int_ffull_en(struct bmp3xx_desc *desc, bool ffull_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.ffull_en = ffull_en & 1;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -335,7 +338,7 @@ int bmp3xx_get_int_ffull_en(struct bmp3xx_desc *desc, bool *ffull_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*ffull_en = int_ctrl.ffull_en;
 	return 0;
 }
@@ -344,9 +347,9 @@ int bmp3xx_set_int_drdy_en(struct bmp3xx_desc *desc, bool drdy_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.drdy_en = drdy_en & 1;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -354,7 +357,7 @@ int bmp3xx_get_int_drdy_en(struct bmp3xx_desc *desc, bool *drdy_en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	*drdy_en = int_ctrl.drdy_en;
 	return 0;
 }
@@ -363,14 +366,14 @@ int bmp3xx_set_int_config(struct bmp3xx_desc *desc, const struct bmp3xx_int_cfg 
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	int_ctrl.int_od = cfg->drive;
 	int_ctrl.int_level = cfg->level;
 	int_ctrl.int_latch_en = cfg->latch_en;
 	int_ctrl.fwtm_en = cfg->fwtm_en;
 	int_ctrl.ffull_en = cfg->ffull_en;
 	int_ctrl.drdy_en = cfg->drdy_en;
-	_ROE(bmp3xx_write_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	return 0;
 }
 
@@ -378,7 +381,7 @@ int bmp3xx_get_int_config(struct bmp3xx_desc *desc, struct bmp3xx_int_cfg *cfg)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_int_ctrl_t int_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
+	_ROE(readRegister(BMP3XX_INT_CTRL, (uint8_t*)&int_ctrl, 1));
 	cfg->drive = int_ctrl.int_od;
 	cfg->level = int_ctrl.int_level;
 	cfg->latch_en = int_ctrl.int_latch_en;
@@ -392,9 +395,9 @@ int bmp3xx_set_spi_mode(struct bmp3xx_desc *desc, enum BMP3XX_SPI_MODE mode)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	if_conf.spi_mode = mode;
-	_ROE(bmp3xx_write_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(writeRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	return 0;
 }
 
@@ -402,7 +405,7 @@ int bmp3xx_get_spi_mode(struct bmp3xx_desc *desc, enum BMP3XX_SPI_MODE *mode)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	*mode = if_conf.spi_mode;
 	return 0;
 }
@@ -411,9 +414,9 @@ int bmp3xx_set_i2c_wdt_en(struct bmp3xx_desc *desc, bool en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	if_conf.i2c_wdt_en = (uint8_t)en;
-	_ROE(bmp3xx_write_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(writeRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	return 0;
 }
 
@@ -421,7 +424,7 @@ int bmp3xx_get_i2c_wdt_en(struct bmp3xx_desc *desc, bool *en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	*en = (bool)if_conf.i2c_wdt_en;
 	return 0;
 }
@@ -430,9 +433,9 @@ int bmp3xx_set_i2c_wdt_timeout(struct bmp3xx_desc *desc, enum BMP3XX_I2C_WDT tim
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	if_conf.i2c_wdt_sel = timeout;
-	_ROE(bmp3xx_write_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(writeRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	return 0;
 }
 
@@ -440,7 +443,7 @@ int bmp3xx_get_i2c_wdt_timeout(struct bmp3xx_desc *desc, enum BMP3XX_I2C_WDT *ti
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_if_conf_t if_conf;
-	_ROE(bmp3xx_read_register(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
+	_ROE(readRegister(BMP3XX_IF_CONF, (uint8_t*)&if_conf, 1));
 	*timeout = if_conf.i2c_wdt_sel;
 	return 0;
 }
@@ -449,9 +452,9 @@ int bmp3xx_set_press_en(struct bmp3xx_desc *desc, bool en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	pwr_ctrl.press_en = (uint8_t)en;
-	_ROE(bmp3xx_write_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	return 0;
 }
 
@@ -459,7 +462,7 @@ int bmp3xx_get_press_en(struct bmp3xx_desc *desc, bool *en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	*en = (bool)pwr_ctrl.press_en;
 	return 0;
 }
@@ -468,9 +471,9 @@ int bmp3xx_set_temp_en(struct bmp3xx_desc *desc, bool en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	pwr_ctrl.temp_en = (uint8_t)en;
-	_ROE(bmp3xx_write_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	return 0;
 }
 
@@ -478,7 +481,7 @@ int bmp3xx_get_temp_en(struct bmp3xx_desc *desc, bool *en)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	*en = (bool)pwr_ctrl.temp_en;
 	return 0;
 }
@@ -487,9 +490,9 @@ int bmp3xx_set_mode(struct bmp3xx_desc *desc, enum BMP3XX_MODE mode)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	pwr_ctrl.mode = mode;
-	_ROE(bmp3xx_write_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(writeRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	return 0;
 }
 
@@ -497,7 +500,7 @@ int bmp3xx_get_mode(struct bmp3xx_desc *desc, enum BMP3XX_MODE *mode)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_pwr_ctrl_t pwr_ctrl;
-	_ROE(bmp3xx_read_register(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
+	_ROE(readRegister(BMP3XX_PWR_CTRL, (uint8_t*)&pwr_ctrl, 1));
 	*mode = pwr_ctrl.mode;
 	return 0;
 }
@@ -506,9 +509,9 @@ int bmp3xx_set_press_ovs(struct bmp3xx_desc *desc, enum BMP3XX_OVS ovs)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_osr_t osr;
-	_ROE(bmp3xx_read_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(readRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	osr.ovs_p = ovs;
-	_ROE(bmp3xx_write_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(writeRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	return 0;
 }
 
@@ -516,7 +519,7 @@ int bmp3xx_get_press_ovs(struct bmp3xx_desc *desc, enum BMP3XX_OVS *ovs)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_osr_t osr;
-	_ROE(bmp3xx_read_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(readRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	*ovs = osr.ovs_p;
 	return 0;
 }
@@ -525,9 +528,9 @@ int bmp3xx_set_temp_ovs(struct bmp3xx_desc *desc, enum BMP3XX_OVS ovs)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_osr_t osr;
-	_ROE(bmp3xx_read_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(readRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	osr.ovs_t = ovs;
-	_ROE(bmp3xx_write_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(writeRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	return 0;
 }
 
@@ -535,7 +538,7 @@ int bmp3xx_get_temp_ovs(struct bmp3xx_desc *desc, enum BMP3XX_OVS *ovs)
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_osr_t osr;
-	_ROE(bmp3xx_read_register(BMP3XX_OSR, (uint8_t*)&osr, 1));
+	_ROE(readRegister(BMP3XX_OSR, (uint8_t*)&osr, 1));
 	*ovs = osr.ovs_t;
 	return 0;
 }
@@ -544,9 +547,9 @@ int bmp3xx_set_odr(struct bmp3xx_desc *desc, enum BMP3XX_ODR odr)
 {
 	if (desc == NULL) return 1;
 	uint8_t odr_reg;
-	_ROE(bmp3xx_read_register(BMP3XX_ODR, &odr_reg, 1));
+	_ROE(readRegister(BMP3XX_ODR, &odr_reg, 1));
 	odr_reg = odr;
-	_ROE(bmp3xx_write_register(BMP3XX_ODR, &odr_reg, 1));
+	_ROE(writeRegister(BMP3XX_ODR, &odr_reg, 1));
 	return 0;
 }
 
@@ -554,7 +557,7 @@ int bmp3xx_get_odr(struct bmp3xx_desc *desc, enum BMP3XX_ODR *odr)
 {
 	if (desc == NULL) return 1;
 	uint8_t odr_reg;
-	_ROE(bmp3xx_read_register(BMP3XX_ODR, &odr_reg, 1));
+	_ROE(readRegister(BMP3XX_ODR, &odr_reg, 1));
 	*odr = odr_reg;
 	return 0;
 }
@@ -563,9 +566,9 @@ int bmp3xx_set_iir_filt_coef(struct bmp3xx_desc *desc, enum BMP3XX_IIR_FILT_COEF
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_config_t config;
-	_ROE(bmp3xx_read_register(BMP3XX_CONFIG, (uint8_t*)&config, 1));
+	_ROE(readRegister(BMP3XX_CONFIG, (uint8_t*)&config, 1));
 	config.iir_filter = coef;
-	_ROE(bmp3xx_write_register(BMP3XX_CONFIG, (uint8_t*)&config, 1));
+	_ROE(writeRegister(BMP3XX_CONFIG, (uint8_t*)&config, 1));
 	return 0;
 }
 
@@ -573,7 +576,7 @@ int bmp3xx_get_iir_filt_coef(struct bmp3xx_desc *desc, enum BMP3XX_IIR_FILT_COEF
 {
 	if (desc == NULL) return 1;
 	_bmp3xx_barsotion_config_t config;
-	_ROE(bmp3xx_read_register(BMP3XX_CONFIG, (uint8_t*)&config, 1));
+	_ROE(readRegister(BMP3XX_CONFIG, (uint8_t*)&config, 1));
 	*coef = config.iir_filter;
 	return 0;
 }
@@ -582,7 +585,7 @@ int bmp3xx_send_flush_fifo_cmd(struct bmp3xx_desc *desc)
 {
 	if (desc == NULL) return 1;
 	uint8_t cmd = 0xB0;
-	_ROE(bmp3xx_write_register(BMP3XX_CMD, &cmd, 1));
+	_ROE(writeRegister(BMP3XX_CMD, &cmd, 1));
 	return 0;
 }
 
@@ -590,7 +593,7 @@ int bmp3xx_send_softreset_cmd(struct bmp3xx_desc *desc)
 {
 	if (desc == NULL) return 1;
 	uint8_t cmd = 0xB6;
-	_ROE(bmp3xx_write_register(BMP3XX_CMD, &cmd, 1));
+	_ROE(writeRegister(BMP3XX_CMD, &cmd, 1));
 	return 0;
 }
 
@@ -598,7 +601,7 @@ int bmp3xx_read_press(struct bmp3xx_desc *desc)
 {
 	if (desc == NULL) return 0;
 	uint8_t raw[3];
-	_ROE(bmp3xx_read_register(BMP3XX_DATA_0, raw, 3));
+	_ROE(readRegister(BMP3XX_DATA_0, raw, 3));
 	desc->uncomp_press = (uint32_t)raw[2]<<16 | (uint32_t)raw[1]<<8 | raw[0];
 	return 0;
 }
@@ -607,7 +610,7 @@ int bmp3xx_read_temp(struct bmp3xx_desc *desc)
 {
 	if (desc == NULL) return 0;
 	uint8_t raw[3];
-	_ROE(bmp3xx_read_register(BMP3XX_DATA_3, raw, 3));
+	_ROE(readRegister(BMP3XX_DATA_3, raw, 3));
 	desc->uncomp_temp = (uint32_t)raw[2]<<16 | (uint32_t)raw[1]<<8 | raw[0];
 	return 0;
 }
@@ -616,7 +619,7 @@ int bmp3xx_read_press_temp(struct bmp3xx_desc *desc)
 {
 	if (desc == NULL) return 0;
 	uint8_t raw[6];
-	_ROE(bmp3xx_read_register(BMP3XX_DATA_0, raw, 6));
+	_ROE(readRegister(BMP3XX_DATA_0, raw, 6));
 	desc->uncomp_press = (uint32_t)raw[2]<<16 | (uint32_t)raw[1]<<8 | raw[0];
 	desc->uncomp_temp = (uint32_t)raw[5]<<16 | (uint32_t)raw[4]<<8 | raw[3];
 	return 0;
