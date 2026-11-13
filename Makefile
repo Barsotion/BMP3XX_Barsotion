@@ -6,12 +6,13 @@ SIZE = ${PREFIX}-size
 .PHONY: build
 build: clean
 	@echo '=====< Building BMP3XX library >================'
-	@mkdir build || echo "'build' directory has already created."
+	@rm -rf build
+	@mkdir build
 	${CC} ${FLAGS} -I./inc -c src/bmp3xx_barsotion.c -o build/bmp3xx_barsotion.o
 	@echo '=====< Creating an archive >===================='
-	${AR} rcs libbmp3xx-barsotion.a build/*
+	${AR} rcs libbarsotion-bmp3xx.a build/*
 	@echo '=====< Totals >================================='
-	@${SIZE} -t --format=berkeley libbmp3xx-barsotion.a
+	@${SIZE} -t libbarsotion-bmp3xx.a
 
 clean:
 	rm -rf build
